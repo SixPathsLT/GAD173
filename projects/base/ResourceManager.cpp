@@ -8,6 +8,8 @@
 std::map<std::string, sf::Texture*> ResourceManager::TEXTURES;
 
 
+char ResourceManager::fileName[26] = "custom_map_1";
+
 std::string files[TOTAL_FILES][2] = {
 	{ "Water1", "data/MapEditorData/Water1.png" },
 	{ "Water2", "data/MapEditorData/Water2.png" },
@@ -23,7 +25,7 @@ std::string files[TOTAL_FILES][2] = {
 
 void ResourceManager::init(Grid &grid) {
 	for (int i = 0; i < TOTAL_FILES; i++) {
-		load(files[i][0], files[i][1]);
+		loadTexture(files[i][0], files[i][1]);
 	}
 
 	//sets the loaded textures for the tool grid
@@ -37,25 +39,26 @@ void ResourceManager::init(Grid &grid) {
 }
 
 //loads the texture from the engine and saves it in our TEXTURES map
-void ResourceManager::load(std::string name, std::string path) {
+void ResourceManager::loadTexture(std::string name, std::string path) {
 	if (name.length() < 1)
 		return;
 
 	TEXTURES[name] = kage::TextureManager::getTexture(path);
 }
 
-void ResourceManager::saveMap(std::string fileName, Grid &grid) {
+void ResourceManager::saveMap(Grid &grid) {
 	std::string mapDetails = ResourceManager::getMapDetails(grid);
-	std::ofstream file("data/MapSaves/" + fileName + ".txt");
+
+	std::ofstream file("data/MapSaves/" + ((std::string) ResourceManager::fileName) + ".txt");
 	file << mapDetails;
 	file.close();
 }
 
 
-void ResourceManager::loadMap(std::string fileName, Grid &grid) {
-	std::ifstream file("data/MapSaves/" + fileName + ".txt");
+void ResourceManager::loadMap(Grid &grid) {
+	std::ifstream file("data/MapSaves/" + ((std::string) ResourceManager::fileName) + ".txt");
 	if (!file.good()) { // checks if file exists
-		std::cout << "File '" << fileName << "' does not exist." << std::endl;
+		std::cout << "File '" << ((std::string) ResourceManager::fileName) << "' does not exist." << std::endl;
 		return;
 	}
 

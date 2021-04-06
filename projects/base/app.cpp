@@ -52,10 +52,6 @@ void App::render()
 
 }
 
-void App::processMouseClick(sf::Vector2i mousePos)
-{
-
-}
 
 
 void App::run()
@@ -86,12 +82,6 @@ void App::run()
 				m_window.close();
 				break;
 			}
-
-			if (event.type == event.MouseButtonPressed) {
-				sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
-				processMouseClick(mousePos);
-				break;
-			}	
 		}
 		sf::Time deltaT_sfml = m_clock.restart();
 		float deltaT = deltaT_sfml.asSeconds();

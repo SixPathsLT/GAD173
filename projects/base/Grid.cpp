@@ -75,7 +75,6 @@
 			sf::Sprite sprite = selectedTile->sprite;
 			sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 170));
 			sprite.setPosition(sf::Vector2f(mousePos.x, mousePos.y));
-			
 			m_window.draw(sprite);
 		}
 	}
@@ -89,6 +88,7 @@
 		}
 		return nullptr;
 	}
+
 
 	int Grid::getSize() {
 		int size = (rows * columns);

@@ -11,7 +11,6 @@ public:
 	virtual bool start();
 	virtual void update(float deltaT);
 	virtual void render();
-	virtual void processMouseClick(sf::Vector2i mousePos);
 	virtual void cleanup();
 	static Example &inst();
 
@@ -19,5 +18,8 @@ public:
 
 	Grid mapGrid;
 	Grid toolGrid;
+
+	bool requestedClearMap = false;
+	bool fileExists = false;
 
 };

@@ -4,7 +4,7 @@
 #include "ResourceManager.h"
 #include "MouseManager.h"
 
-Example::Example(): App()
+Example::Example() : App()
 {
 }
 
@@ -35,11 +35,11 @@ bool Example::start()
 	ResourceManager::init(toolGrid);
 
 	//loads default map
-	ResourceManager::loadMap("custom_map_1", mapGrid);
+	ResourceManager::loadMap(mapGrid);
+
 
 	return true;
 }
-
 
 
 void Example::update(float deltaT)
@@ -48,23 +48,62 @@ void Example::update(float deltaT)
 	{
 		m_running = false;
 	}
+	
+
+	ImGui::Begin("File Manager");
+		int fileNameSize = IM_ARRAYSIZE(ResourceManager::fileName);
+		ImGui::Text("File name:");
+		ImGui::InputText("##file_name", ResourceManager::fileName, fileNameSize);
+
+		if (ImGui::Button("Load Map")) {
+			if (fileNameSize > 0)
+				ResourceManager::loadMap(mapGrid);
+		} 
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Save Map")) {
+			if (fileNameSize > 0) {
+				std::ifstream file("data/MapSaves/" + ((std::string) ResourceManager::fileName) + ".txt");
+
+				if (file.good()) {
+					fileExists = true;
+				} else {
+					ResourceManager::saveMap(mapGrid);
+				}
+			}
+		} 
+
+		if (fileExists) {
+			ImGui::BeginChild("warning_message", ImVec2(0, 65), true);
+
+				std::string warningMessage = ((std::string) ResourceManager::fileName) + " already exists. \nAre you sure you want to overwrite?";
+				ImGui::Text(warningMessage.c_str());
+
+				if (ImGui::Button("Yes")) {
+					fileExists = false;
+					ResourceManager::saveMap(mapGrid);
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("No")) {
+					fileExists = false;
+				}
+
+			ImGui::EndChild();
+		}
+
+	ImGui::End();
+
 
 	ImGui::Begin("Kage2D");
 
 
-	if (ImGui::Button("Toggle Grid Lines")) { //enables/disables the map grid lines
-		mapGrid.showLines = !mapGrid.showLines;
-	} else if(ImGui::Button("Toggle Tile Info")) { //enables/disables info of each tile such as the tile id (index)
-		mapGrid.showTileInfo = !mapGrid.showTileInfo;
-	} else if (ImGui::Button("Load Map 1")) {
-		ResourceManager::loadMap("custom_map_1", mapGrid);
-	} else if (ImGui::Button("Load Map 2")) {
-		ResourceManager::loadMap("custom_map_2", mapGrid);
-	} else if (ImGui::Button("Save as Map 1")) {
-		ResourceManager::saveMap("custom_map_1", mapGrid);
-	} else if (ImGui::Button("Save as Map 2")) {
-		ResourceManager::saveMap("custom_map_2", mapGrid);
-	} else if (ImGui::Button("Print Map Details (future saving/loading)")) { //outputs the current map grid data, which can be used to save/load a map.
+	ImGui::Checkbox("Grid Lines", &mapGrid.showLines);
+	ImGui::Checkbox("Tile Info", &mapGrid.showTileInfo);
+
+	if (ImGui::Button("Print Map Details")) { //outputs the current map grid data, which can be used to save/load a map.
 		std::string mapDetails = ResourceManager::getMapDetails(mapGrid);
 
 		if (mapDetails.length() > 0)
@@ -72,8 +111,25 @@ void Example::update(float deltaT)
 		else
 			std::cout << "=== Map has no set textures. Click a texture from the tool grid and then place it on the Map Grid. ===" << std::endl;
 
-	} else if (ImGui::Button("CLEAR ENTIRE MAP")) {	//removes all textures from the tiles on the map grid
-		ResourceManager::clearMap(mapGrid);
+	}
+	else if (ImGui::Button("Clear Map")) {	//removes all textures from the tiles on the map grid
+		requestedClearMap = !requestedClearMap;
+	} else if (requestedClearMap) {
+		ImGui::BeginChild("confirm_clear_map", ImVec2(0, 55), true);
+			ImGui::Text("Are you sure you want to clear the map?");
+
+			if (ImGui::Button("Yes")) {
+				requestedClearMap = false;
+				ResourceManager::clearMap(mapGrid);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("No")) {
+				requestedClearMap = false;
+			}
+		ImGui::EndChild();
+
 	}
 
 
@@ -81,6 +137,8 @@ void Example::update(float deltaT)
 	{ 
 		m_running = false;
 	}
+
+
 	ImGui::End();
 }
 
@@ -88,14 +146,12 @@ void Example::render()
 {
 	m_window.draw(*m_backgroundSprite);
 
+	sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
+	MouseManager::process(mousePos, &mapGrid, &toolGrid);
+
 	mapGrid.draw(m_window);
 	toolGrid.draw(m_window);
 
-}
-
-
-void Example::processMouseClick(sf::Vector2i mousePos) {
-	MouseManager::processClick(mousePos, &mapGrid, &toolGrid);
 }
 
 void Example::cleanup()
