@@ -5,7 +5,10 @@
 class MouseManager {
 
 public:
-	static void process(sf::Vector2i mousePos, Grid *mapGrid, Grid *toolGrid);
+	static sf::Text *mouseInfo;
+	static bool showMouseInfo;
+	static void process(sf::RenderWindow &m_window, Grid *mapGrid);
+
 
 };
 

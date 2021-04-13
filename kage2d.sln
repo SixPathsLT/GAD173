@@ -11,13 +11,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kage2dutil", "dev\component
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{B63FEAB7-A20D-DEBD-8BA1-4EE4770EBA22}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "base", "projects\base\base.vcxproj", "{8078947C-6CAF-950D-159C-7B1001B2110F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MapEditor", "projects\base\base.vcxproj", "{8078947C-6CAF-950D-159C-7B1001B2110F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "base_with_physics", "projects\base_with_physics\base_with_physics.vcxproj", "{7190FE2B-F555-4537-A8D7-8DD1D2F772B6}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "base_with_physics_test", "projects\base_with_physics_test\base_with_physics_test.vcxproj", "{66EADD27-7FEA-4892-BBEC-EABE0AB7B2E5}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "enemy_sandbox", "projects\enemy_sandbox\enemy_sandbox.vcxproj", "{81F549A0-5E01-4895-9028-0B9F886CE50B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "projects\base_with_physics\base_with_physics.vcxproj", "{7190FE2B-F555-4537-A8D7-8DD1D2F772B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,14 +33,6 @@ Global
 		{7190FE2B-F555-4537-A8D7-8DD1D2F772B6}.Debug|x64.Build.0 = Debug|x64
 		{7190FE2B-F555-4537-A8D7-8DD1D2F772B6}.Release|x64.ActiveCfg = Release|x64
 		{7190FE2B-F555-4537-A8D7-8DD1D2F772B6}.Release|x64.Build.0 = Release|x64
-		{66EADD27-7FEA-4892-BBEC-EABE0AB7B2E5}.Debug|x64.ActiveCfg = Debug|x64
-		{66EADD27-7FEA-4892-BBEC-EABE0AB7B2E5}.Debug|x64.Build.0 = Debug|x64
-		{66EADD27-7FEA-4892-BBEC-EABE0AB7B2E5}.Release|x64.ActiveCfg = Release|x64
-		{66EADD27-7FEA-4892-BBEC-EABE0AB7B2E5}.Release|x64.Build.0 = Release|x64
-		{81F549A0-5E01-4895-9028-0B9F886CE50B}.Debug|x64.ActiveCfg = Debug|x64
-		{81F549A0-5E01-4895-9028-0B9F886CE50B}.Debug|x64.Build.0 = Debug|x64
-		{81F549A0-5E01-4895-9028-0B9F886CE50B}.Release|x64.ActiveCfg = Release|x64
-		{81F549A0-5E01-4895-9028-0B9F886CE50B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,8 +42,6 @@ Global
 		{B19D6BF2-9D55-AD3F-065D-869BF2334830} = {6F3DC397-DB74-0B2F-E47E-6F5250353228}
 		{8078947C-6CAF-950D-159C-7B1001B2110F} = {B63FEAB7-A20D-DEBD-8BA1-4EE4770EBA22}
 		{7190FE2B-F555-4537-A8D7-8DD1D2F772B6} = {B63FEAB7-A20D-DEBD-8BA1-4EE4770EBA22}
-		{66EADD27-7FEA-4892-BBEC-EABE0AB7B2E5} = {B63FEAB7-A20D-DEBD-8BA1-4EE4770EBA22}
-		{81F549A0-5E01-4895-9028-0B9F886CE50B} = {B63FEAB7-A20D-DEBD-8BA1-4EE4770EBA22}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDACB044-0AC8-416B-9008-E6BAD7776A1F}

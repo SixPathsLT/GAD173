@@ -27,17 +27,32 @@ bool Example::start()
 	sf::Vector2u resolution = m_backgroundSprite->getTexture()->getSize();
 	m_backgroundSprite->setScale(float(m_window.getSize().x) / resolution.x, float(m_window.getSize().y) / resolution.y);
 
-	//creates desirable grid (rows, columns, start loc X, start loc Y, spacing)
-	mapGrid = Grid(15, 25, MAP_GRID_START_X, MAP_GRID_START_Y);
-	toolGrid = Grid(8, 3, TOOL_GRID_START_X, TOOL_GRID_START_Y, 1.2);
+	//creates desirable grid (rows, columns, start loc X, start loc Y)
+	mapGrid = Grid(10, 15, MAP_GRID_START_X, MAP_GRID_START_Y);
+	//creates desired tile dimensions (sizeX, sizeY, spacing)
+	mapGrid.createTiles(100, 45);
 
-	//loads textures for the tool grid
-	ResourceManager::init(toolGrid);
-
+	//loads resources
+	ResourceManager::init();
 	//loads default map
 	ResourceManager::loadMap(mapGrid);
+	//set the default tab
+	selectedTab = ToolTab::DRAW;
 
 
+	std::string line = "Bricks1 - 55 - 56 - 57 - 58 - 80 - 83 - 105 - 108 - 112 - 118 - 130";
+	std::string delimiter = " - ";
+	int index = 0;
+
+	while (index <= line.length()) {
+		index = line.find(delimiter); // updates the next index where the specified string is located at
+
+		std::string word = line.substr(0, index); // process this data
+		line = line.substr(index + delimiter.length()); // updates the line
+
+		std::cout << word << std::endl;
+	}
+	
 	return true;
 }
 
@@ -48,9 +63,174 @@ void Example::update(float deltaT)
 	{
 		m_running = false;
 	}
-	
 
-	ImGui::Begin("File Manager");
+
+	ImGui::Begin("Toolbox");
+
+		std::map<std::string, sf::Texture*>::iterator iterator;
+		for (iterator = ResourceManager::TEXTURES.begin(); iterator != ResourceManager::TEXTURES.end(); iterator++) {
+			if (iterator->first.empty() || iterator->second == nullptr || iterator->first.find("tool_") != 0)
+				continue;
+
+			sf::Sprite sprite;
+			sprite.setTexture(*iterator->second);
+			sprite.setScale(44.f / iterator->second->getSize().x, 44.f / iterator->second->getSize().y);
+
+			ImGui::SameLine();
+
+			bool highlight = false;
+
+			std::string key = iterator->first;
+			if ((key == "tool_clear_map" && selectedTab == ToolTab::CLEAR_MAP)
+				|| (key == "tool_settings" && selectedTab == ToolTab::SETTINGS)
+				|| (key == "tool_info" && selectedTab == ToolTab::INFO)
+				|| (key == "tool_draw" && selectedTab == ToolTab::DRAW)) {
+				highlight = true;
+			}
+
+			if (ImGui::ImageButton(sprite, 2, sf::Color::Transparent, highlight ? sf::Color(0, 149, 206) : sf::Color::White)) {
+				std::string key = iterator->first;
+				
+				if (key == "tool_clear_map") {		
+					selectedTab = ToolTab::CLEAR_MAP;
+				} else if (key == "tool_settings") {
+					selectedTab = ToolTab::SETTINGS;
+				} else if (key == "tool_info") {
+					selectedTab = ToolTab::INFO;
+				} else if (key == "tool_draw") {
+					selectedTab = ToolTab::DRAW;
+				}
+
+				if (selectedTab != ToolTab::DRAW) {
+					ResourceManager::selectedTexture = nullptr;
+				}
+			}
+		}
+
+
+		switch (selectedTab) {
+		case ToolTab::CLEAR_MAP:
+			ImGui::BeginChild("confirm_clear_map", ImVec2(0, 65), true);
+			ImGui::Text("Are you sure you want to clear\nthe Entire Map?");
+
+			if (ImGui::Button("Yes")) {
+				selectedTab = ToolTab::DRAW;
+				ResourceManager::clearMap(mapGrid);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("No")) {
+				selectedTab = ToolTab::DRAW;
+			}
+			ImGui::EndChild();
+
+			break;
+		case ToolTab::SETTINGS:
+		{
+			ImGui::BeginChild("file_panel", ImVec2(0, fileExists ? 145 : 75), true);
+				int fileNameSize = IM_ARRAYSIZE(ResourceManager::fileName);
+				ImGui::Text("File name:");
+				ImGui::InputText("##file_name", ResourceManager::fileName, fileNameSize);
+
+				if (ImGui::Button("Load Map")) {
+					if (fileNameSize > 0)
+						ResourceManager::loadMap(mapGrid);
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Save Map")) {
+					if (fileNameSize > 0) {
+						std::ifstream file("data/MapSaves/" + ((std::string) ResourceManager::fileName) + ".txt");
+
+						if (file.good()) {
+							fileExists = true;
+						} else {
+							ResourceManager::saveMap(mapGrid);
+						}
+					}
+				}
+
+				if (fileExists) {
+					ImGui::BeginChild("warning_message", ImVec2(0, 65), true);
+
+					std::string warningMessage = ((std::string) ResourceManager::fileName) + " already exists. \nAre you sure you want to overwrite?";
+					ImGui::Text(warningMessage.c_str());
+
+					if (ImGui::Button("Yes")) {
+						fileExists = false;
+						ResourceManager::saveMap(mapGrid);
+					}
+
+					ImGui::SameLine();
+
+					if (ImGui::Button("No")) {
+						fileExists = false;
+					}
+
+					ImGui::EndChild();
+				}
+			ImGui::EndChild();
+
+			if (ImGui::Button("Print Map Details")) { //outputs the current map grid data, which can be used to save/load a map.
+				std::string mapDetails = ResourceManager::getMapDetails(mapGrid);
+
+				if (mapDetails.length() > 0)
+					std::cout << "=== Printing Map Details (TEXTURE_NAME - TILE_ID[]) ===" << std::endl << mapDetails << std::endl;
+				else
+					std::cout << "=== Map has no set textures. Click a texture from the tool grid and then place it on the Map Grid. ===" << std::endl;
+
+			}
+
+			if (ImGui::Button("Exit")) {
+				m_running = false;
+			}
+		}
+			break;
+		case ToolTab::INFO:
+			ImGui::BeginChild("info_panel", ImVec2(0, 0), true);
+				ImGui::Checkbox("Grid Lines", &mapGrid.showLines);
+				//ImGui::SameLine();
+				ImGui::Checkbox("Tile Ids", &mapGrid.showTileIds);
+				ImGui::Checkbox("Mouse Info", &MouseManager::showMouseInfo);
+				//ImGui::SameLine();
+				ImGui::Checkbox("Texture Names", &Tile::showTextureNames);
+			ImGui::EndChild();
+			break;
+		case ToolTab::DRAW:
+			float sprite_size = 64.f;
+			float columns = 3.0;
+			float spacing = 1.31;
+			ImGui::Text("Textures:");
+
+			ImGui::BeginChild("loaded_textures", ImVec2(sprite_size * (columns * spacing), sprite_size * 7.1), true);
+
+				int index = 0;
+
+				for (iterator = ResourceManager::TEXTURES.begin(); iterator != ResourceManager::TEXTURES.end(); iterator++) {
+					if (iterator->first.empty() || iterator->second == nullptr || iterator->first.find("tool_") == 0)
+						continue;
+
+					if (index % (int)columns != 0)
+						ImGui::SameLine();
+
+					index++;
+
+					sf::Sprite sprite;
+					sprite.setTexture(*iterator->second);
+					sprite.setScale(sprite_size / iterator->second->getSize().x, sprite_size / iterator->second->getSize().y);
+
+					if (ImGui::ImageButton(sprite, 3))
+						ResourceManager::selectedTexture = iterator->second;
+				}
+			ImGui::EndChild();
+			break;
+		}
+
+	ImGui::End();
+
+	/*ImGui::Begin("File Manager");
 		int fileNameSize = IM_ARRAYSIZE(ResourceManager::fileName);
 		ImGui::Text("File name:");
 		ImGui::InputText("##file_name", ResourceManager::fileName, fileNameSize);
@@ -94,14 +274,19 @@ void Example::update(float deltaT)
 			ImGui::EndChild();
 		}
 
-	ImGui::End();
+	ImGui::End();*/
 
 
-	ImGui::Begin("Kage2D");
+/*	ImGui::Begin("Settings");
 
 
 	ImGui::Checkbox("Grid Lines", &mapGrid.showLines);
-	ImGui::Checkbox("Tile Info", &mapGrid.showTileInfo);
+	ImGui::SameLine();
+	ImGui::Checkbox("Tile Ids", &mapGrid.showTileIds);
+
+	ImGui::Checkbox("Mouse Info", &MouseManager::showMouseInfo);
+	ImGui::SameLine();
+	ImGui::Checkbox("Texture Names", &Tile::showTextureNames);
 
 	if (ImGui::Button("Print Map Details")) { //outputs the current map grid data, which can be used to save/load a map.
 		std::string mapDetails = ResourceManager::getMapDetails(mapGrid);
@@ -112,7 +297,8 @@ void Example::update(float deltaT)
 			std::cout << "=== Map has no set textures. Click a texture from the tool grid and then place it on the Map Grid. ===" << std::endl;
 
 	}
-	else if (ImGui::Button("Clear Map")) {	//removes all textures from the tiles on the map grid
+	ImGui::SameLine();
+	 if (ImGui::Button("Clear Map")) {	//removes all textures from the tiles on the map grid
 		requestedClearMap = !requestedClearMap;
 	} else if (requestedClearMap) {
 		ImGui::BeginChild("confirm_clear_map", ImVec2(0, 55), true);
@@ -139,18 +325,19 @@ void Example::update(float deltaT)
 	}
 
 
-	ImGui::End();
+	ImGui::End();*/
+
+
 }
 
 void Example::render()
 {
 	m_window.draw(*m_backgroundSprite);
 
-	sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
-	MouseManager::process(mousePos, &mapGrid, &toolGrid);
+	MouseManager::process(m_window, &mapGrid);
 
 	mapGrid.draw(m_window);
-	toolGrid.draw(m_window);
+	//toolGrid.draw(m_window);
 
 }
 

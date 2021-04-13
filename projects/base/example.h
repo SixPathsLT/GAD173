@@ -17,9 +17,18 @@ public:
 	sf::Sprite *m_backgroundSprite;
 
 	Grid mapGrid;
-	Grid toolGrid;
 
-	bool requestedClearMap = false;
 	bool fileExists = false;
+
+	enum ToolTab {
+		NONE,
+		CLEAR_MAP,
+		DRAW,
+		SETTINGS,
+		INFO
+	};
+
+	ToolTab selectedTab;
+
 
 };

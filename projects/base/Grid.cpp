@@ -1,28 +1,37 @@
 #include "Grid.h"
 #include <iostream>
 #include "example.h"
+#include "ResourceManager.h"
 
-	sf::Font font;
 
 	sf::Color Grid::HIGHLIGHT_COLOR = sf::Color(0, 255, 0, 50);
-	sf::Color Grid::TRANSPARENT_COLOR = sf::Color(0, 0, 0, 0);
+	//sf::Color Grid::TRANSPARENT_COLOR = sf::Color(0, 0, 0, 0);
 
 	Tile* selectedTile = nullptr;
 
-	Grid::Grid(int totalRows, int totalColumns, int startX, int startY, double spacing) {
-		font.loadFromFile("data/bluehigh.ttf");
-
+	Grid::Grid(int totalRows, int totalColumns, int startX, int startY) {
+		Grid::startX = startX;
+		Grid::startY = startY;
 		rows = totalRows;
 		columns = totalColumns;
+
+		tileIndexInfo->setFont(ResourceManager::FONT_BLUE_HIGH);
+		tileIndexInfo->setCharacterSize(15);
+	}
+
+
+ 	void Grid::createTiles(int sizeX, int sizeY, double spacing) {
+		if (spacing < 1)
+			spacing = 1;
 
 		int index = 0;
 		//creates each tile and sets it in the tiles[] array
 		for (int row = 0; row < rows; row++) {
-			for (int column = 0; column < columns; column++) { 
-				int x = startX + (column * TILE_SIZE) * spacing;
-				int y = startY + (row * TILE_SIZE) * spacing;
+			for (int column = 0; column < columns; column++) {
+				int x = startX + (column * sizeX) * spacing;
+				int y = startY + (row * sizeY) * spacing;
 
-				tiles[index] = Tile(index, x, y);
+				tiles[index] = Tile(index, sizeX, sizeY, x, y);
 				index++;
 			}
 		}
@@ -43,10 +52,8 @@
 			if (tile->isInTile(mousePos.x, mousePos.y)) { //checks if the mouse cursor is inside the current tile, then highlight that tile.
 				tile->tileShape.setFillColor(HIGHLIGHT_COLOR);
 				tile->tileShape.setOutlineColor(sf::Color::Green);
-			} else if (selectedTile == tile && selectedTile->sprite.getTexture() != nullptr) { // outlines the selected tile.
-				selectedTile->tileShape.setOutlineColor(sf::Color::Magenta);
 			} else { // resets any color modifications done to the tile
-				tile->tileShape.setFillColor(TRANSPARENT_COLOR);
+				tile->tileShape.setFillColor(sf::Color::Transparent);
 				tile->tileShape.setOutlineColor(sf::Color::White);
 			}
 
@@ -55,28 +62,32 @@
 
 			//draws the sprite on the tile
 			if (tile->showSprite && tile->textureName.length() > 0)
-				m_window.draw(tile->sprite);
+				m_window.draw(*tile->sprite);
 
-			if (showTileInfo) {
-				sf::Text tileInfo;
-				tileInfo.setFont(font);
-				tileInfo.setString(std::to_string(tile->id));
-				tileInfo.setCharacterSize(15);
-				tileInfo.setPosition(5 + tile->x, tile->y);
+			if (Tile::showTextureNames)
+				m_window.draw(*tile->tileInfo);
 
-				m_window.draw(tileInfo);
+			if (showTileIds) {
+				tileIndexInfo->setString(std::to_string(tile->id));
+				tileIndexInfo->setPosition(5 + tile->startX, tile->startY);
+
+				m_window.draw(*tileIndexInfo);
 			}
 		}
 
 		//visually shows selected sprite for placements, by following mouse cursor
-		if (selectedTile != nullptr && selectedTile->sprite.getTexture() != nullptr) {
+		if (ResourceManager::selectedTexture != nullptr) {
 			sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
 
-			sf::Sprite sprite = selectedTile->sprite;
+			sf::Sprite sprite;
+			sf::Texture texture = *ResourceManager::selectedTexture;
+			sprite.setTexture(texture);
+			sprite.scale(94.f / texture.getSize().x, 44.f / texture.getSize().y);
 			sprite.setColor(sf::Color(sprite.getColor().r, sprite.getColor().g, sprite.getColor().b, 170));
 			sprite.setPosition(sf::Vector2f(mousePos.x, mousePos.y));
 			m_window.draw(sprite);
 		}
+
 	}
 
 	Tile* Grid::fetchTile(sf::Vector2i mousePos) {
