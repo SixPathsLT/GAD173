@@ -2,6 +2,7 @@
 
 #include "app.h"
 #include "Grid.h";
+#include "AnimatedSprite.h"
 
 class Example : public App
 {
@@ -19,6 +20,7 @@ public:
 	Grid mapGrid;
 
 	bool fileExists = false;
+
 
 	enum ToolTab {
 		NONE,

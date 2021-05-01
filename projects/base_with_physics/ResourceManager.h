@@ -27,6 +27,5 @@ public:
 	static int getTotalLoadedTextures();
 	static bool isDrawableTexture(std::string textureName);
 
-
 };
 

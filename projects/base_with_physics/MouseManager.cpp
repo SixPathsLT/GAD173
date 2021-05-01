@@ -24,13 +24,12 @@ void MouseManager::process(sf::RenderWindow &m_window, Grid *mapGrid) {
 		m_window.draw(*mouseInfo);
 	}
 
-	bool mousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Mouse::isButtonPressed(sf::Mouse::Button::Right) || sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle);
+	bool mousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
 
 	if (!mousePressed)
 		return;
 
 	mapGrid->selectedTile = mapGrid->fetchTile(mousePos);
-
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 		//place selected tile on map
@@ -42,16 +41,14 @@ void MouseManager::process(sf::RenderWindow &m_window, Grid *mapGrid) {
 			sf::Sprite sprite;
 			sprite.setTexture(*ResourceManager::selectedTexture);
 			sprite.setPosition(sf::Vector2f(mapGrid->selectedTile->startX, mapGrid->selectedTile->startY));
-
-
+			
+			
 			mapGrid->selectedTile->setTexture(textureName);
 			mapGrid->selectedTile = nullptr;
 		}
 
 		//remove tiles
 		//removeTile(mapGrid, mousePos); // disabled for now, so that we only delete textures with right click.
-	} else if (mapGrid->selectedTile != nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle)) {
-		mapGrid->selectedTile->collide();
 	} else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
 		removeTile(mapGrid, mousePos);
 	}

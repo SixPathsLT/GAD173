@@ -103,6 +103,7 @@
     <ClInclude Include="Grid.h" />
     <ClInclude Include="MouseManager.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="AnimatedSprite.h" />
     <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +114,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MouseManager.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="AnimatedSprite.cpp" />
     <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>

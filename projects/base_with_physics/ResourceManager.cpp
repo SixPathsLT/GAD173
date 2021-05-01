@@ -53,7 +53,7 @@ std::string files[TOTAL_FILES][2] = {
 
 	//game data
 	{ "coin_spritesheet", "data/GameData/coin.png" },
-	{ "block_spritesheet", "data/GameData/block_sheetA.png" },
+	{ "block_spritesheet", "data/GameData/block_sheet_1.png" },
 
 };
 

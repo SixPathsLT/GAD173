@@ -13,6 +13,7 @@ App::~App()
 {
 }
 
+
 bool App::init()
 {
 	// This sets the working directory to where the executable is.
@@ -32,6 +33,7 @@ bool App::init()
 	}
 	ImGui::CreateContext();
 	ImGui::SFML::Init(m_window);
+
 	return true;
 }
 
@@ -49,6 +51,8 @@ void App::render()
 {
 
 }
+
+
 
 void App::run()
 {
@@ -72,6 +76,7 @@ void App::run()
 		while (m_window.pollEvent(event))
 		{
 			ImGui::SFML::ProcessEvent(event);
+
 			if (event.type == sf::Event::Closed)
 			{
 				m_window.close();

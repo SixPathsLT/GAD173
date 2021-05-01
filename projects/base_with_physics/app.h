@@ -37,4 +37,5 @@ public:
 	sf::RenderWindow &getWindow();
 	sf::Clock &getClock();
 
+
 };

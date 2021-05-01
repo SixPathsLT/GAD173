@@ -20,8 +20,6 @@
 		tileInfo->setFont(ResourceManager::FONT_BLUE_HIGH);
 		tileInfo->setString(textureName);
 		tileInfo->setCharacterSize(15);
-
-		
 	}
 
 	bool Tile::isInTile(int mouseX, int mouseY) {
@@ -52,24 +50,6 @@
 			sprite->setScale(width / texture->getSize().x, height / texture->getSize().y);
 
 		showSprite = true;
-
-		sf::Color color = sprite->getTexture()->copyToImage().getPixel(sprite->getTexture()->getSize().x / 2, sprite->getTexture()->getSize().y / 2);
-
-		animatedSprite.spriteSheet.setColor(color);
-
-		animatedSprite.spriteSheet.setPosition(startX, startY);
-		animatedSprite.setAnimation(AnimatedSprite::BLOCK, 20);
-	}
-
-	void Tile::collide() {
-		if (!showSprite)
-			return;
-
-
-		animatedSprite.spriteSheet.setScale(width / animatedSprite.spriteWidth, height / animatedSprite.spriteHeight);
-
-		animatedSprite.play(false);
-		removeSprite();
 	}
 
 	void Tile::removeSprite() {

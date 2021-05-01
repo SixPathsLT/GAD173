@@ -2,19 +2,12 @@
 #include <iostream>
 #include "example.h"
 #include "ResourceManager.h"
-#include "AnimatedSprite.h"
+
 
 	sf::Color Grid::HIGHLIGHT_COLOR = sf::Color(0, 255, 0, 50);
 	//sf::Color Grid::TRANSPARENT_COLOR = sf::Color(0, 0, 0, 0);
 
 	Tile* selectedTile = nullptr;
-
-	const int TOTAL_COINS = 5;
-	AnimatedSprite coinAnimator[TOTAL_COINS];
-
-	Grid::Grid()
-	{
-	}
 
 	Grid::Grid(int rows, int columns, int startX, int startY) {
 		this->startX = startX;
@@ -24,15 +17,6 @@
 
 		tileIndexInfo->setFont(ResourceManager::FONT_BLUE_HIGH);
 		tileIndexInfo->setCharacterSize(15);
-
-		for (int i = 0; i < TOTAL_COINS; i++) {
-			
-			coinAnimator[i].setAnimation(AnimatedSprite::COIN, 90);
-			coinAnimator[i].spriteSheet.setPosition(250 * (1 + i), 550);
-			coinAnimator[i].spriteSheet.setScale(0.5, 0.5);
-			coinAnimator[i].play(true);
-		}
-
 	}
 
 
@@ -80,8 +64,6 @@
 			if (tile->showSprite && tile->textureName.length() > 0)
 				m_window.draw(*tile->sprite);
 
-			tile->animatedSprite.render(m_window);
-
 			if (Tile::SHOW_TEXTURE_NAMES)
 				m_window.draw(*tile->tileInfo);
 
@@ -92,13 +74,6 @@
 				m_window.draw(*tileIndexInfo);
 			}
 		}
-
-
-		for (int i = 0; i < TOTAL_COINS; i++) {
-			coinAnimator[i].render(m_window);
-		}
-
-
 
 		//visually shows selected sprite for placements, by following mouse cursor
 		if (ResourceManager::selectedTexture != nullptr) {

@@ -3,6 +3,7 @@
 #include "Grid.h"
 #include "ResourceManager.h"
 #include "MouseManager.h"
+#include "AnimatedSprite.h"
 
 Example::Example() : App()
 {
@@ -27,31 +28,56 @@ bool Example::start()
 	sf::Vector2u resolution = m_backgroundSprite->getTexture()->getSize();
 	m_backgroundSprite->setScale(float(m_window.getSize().x) / resolution.x, float(m_window.getSize().y) / resolution.y);
 
+	//loads resources
+	ResourceManager::init();
+
 	//creates desirable grid (rows, columns, start loc X, start loc Y)
 	mapGrid = Grid(10, 15, MAP_GRID_START_X, MAP_GRID_START_Y);
 	//creates desired tile dimensions (sizeX, sizeY, spacing)
 	mapGrid.createTiles(100, 45);
 
-	//loads resources
-	ResourceManager::init();
+
 	//loads default map
 	ResourceManager::loadMap(mapGrid);
 	//set the default tab
 	selectedTab = ToolTab::DRAW;
 
 
-	std::string line = "Bricks1 - 55 - 56 - 57 - 58 - 80 - 83 - 105 - 108 - 112 - 118 - 130";
+	////blockAnimator.setAnimation(AnimatedSprite::BLOCK, 500);
+	//blockAnimator.play(false);
+
+	/*std::string line = "Bricks1 - 55 - 56 - 57 - 58 - 80 - 83 - 105 - 108 - 112 - 118 - 130";
+
 	std::string delimiter = " - ";
 	int index = 0;
 
-	while (index <= line.length()) {
+	while (index >= 0) {
 		index = line.find(delimiter); // updates the next index where the specified string is located at
 
 		std::string word = line.substr(0, index); // process this data
 		line = line.substr(index + delimiter.length()); // updates the line
 
 		std::cout << word << std::endl;
-	}
+	}*/
+
+	/*std::string data = "341, 1, 344, 4, 5, 6, 7";
+
+	int startIndex = 0;
+	int commaIndex = data.find(",");
+
+	while (true) {
+		int cutCount = commaIndex - startIndex;
+		std::string word = data.substr(startIndex, cutCount);
+
+		startIndex = (commaIndex + 1);
+
+		std::cout << word << std::endl;
+
+		if (commaIndex == -1)
+			break;
+
+		commaIndex = data.find(",", startIndex);
+	}*/
 	
 	return true;
 }
@@ -195,7 +221,7 @@ void Example::update(float deltaT)
 				ImGui::Checkbox("Tile Ids", &mapGrid.showTileIds);
 				ImGui::Checkbox("Mouse Info", &MouseManager::showMouseInfo);
 				//ImGui::SameLine();
-				ImGui::Checkbox("Texture Names", &Tile::showTextureNames);
+				ImGui::Checkbox("Texture Names", &Tile::SHOW_TEXTURE_NAMES);
 			ImGui::EndChild();
 			break;
 		case ToolTab::DRAW:
@@ -209,7 +235,7 @@ void Example::update(float deltaT)
 				int index = 0;
 
 				for (iterator = ResourceManager::TEXTURES.begin(); iterator != ResourceManager::TEXTURES.end(); iterator++) {
-					if (iterator->first.empty() || iterator->second == nullptr || iterator->first.find("tool_") == 0)
+					if (iterator->first.empty() || iterator->second == nullptr || !ResourceManager::isDrawableTexture(iterator->first))
 						continue;
 
 					if (index % (int)columns != 0)
@@ -337,7 +363,6 @@ void Example::render()
 	MouseManager::process(m_window, &mapGrid);
 
 	mapGrid.draw(m_window);
-	//toolGrid.draw(m_window);
 
 }
 

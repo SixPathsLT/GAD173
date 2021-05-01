@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "AnimatedSprite.h"
 
 #define DEFAULT_TILE_SIZE 64
 
@@ -17,8 +16,6 @@ public:
 	bool showSprite;
 	static bool SHOW_TEXTURE_NAMES;
 
-	AnimatedSprite animatedSprite;
-
 	std::string textureName;
 
 	int id;
@@ -30,7 +27,6 @@ public:
 	bool isInTile(int mouseX, int mouseY);
 	void setTexture(std::string textureName);
 	void removeSprite();
-	void collide();
 
 };
 

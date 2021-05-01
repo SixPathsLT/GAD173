@@ -19,8 +19,7 @@ private:
 	int startY = 0;
 
 public:
-	Grid();
-	Grid(int totalRows, int totalColumns, int startX = 0, int startY = 0);
+	Grid(int totalRows = 1, int totalColumns = 1, int startX = 0, int startY = 0);
 
 	Tile tiles[TOTAL_TILES_AMOUNT];
 
