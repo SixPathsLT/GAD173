@@ -10,12 +10,9 @@ class Tile
 
 public:
 	Tile(int id = -1, float width = DEFAULT_TILE_SIZE, float height = DEFAULT_TILE_SIZE, int startX = 0, int startY = 0);
-
-	sf::Text *tileInfo = new sf::Text();
-	sf::RectangleShape tileShape;
+	~Tile();
 	sf::Sprite *sprite;
 	bool showSprite;
-	static bool SHOW_TEXTURE_NAMES;
 
 	AnimatedSprite animatedSprite;
 

@@ -99,23 +99,43 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="app.h" />
-    <ClInclude Include="example.h" />
+    <ClInclude Include="Entities\Ball.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="Entities\ChocoboNPC.h" />
+    <ClInclude Include="Entities\Entity.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="Grid.h" />
-    <ClInclude Include="MouseManager.h" />
+    <ClInclude Include="Entities\Player.h" />
+    <ClInclude Include="Scenes\LevelsScene.h" />
+    <ClInclude Include="Scenes\GameScene.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Scenes\MenuScene.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="AnimatedSprite.h" />
+    <ClInclude Include="Scenes\Scene.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="app.cpp" />
+    <ClCompile Include="Entities\Ball.cpp" />
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Entities\ChocoboNPC.cpp" />
     <ClCompile Include="dependencies.cpp" />
-    <ClCompile Include="example.cpp" />
+    <ClCompile Include="Entities\Entity.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="Entities\Player.cpp" />
+    <ClCompile Include="Scenes\LevelsScene.cpp" />
+    <ClCompile Include="Scenes\GameScene.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MouseManager.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Scenes\MenuScene.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="AnimatedSprite.cpp" />
+    <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\dev\components\kage2dutil\kage2dutil.vcxproj">

@@ -4,6 +4,7 @@
 #include "kage2dutil/system.h"
 #include "kage2dutil/imgui.h"
 #include "kage2dutil/imgui-SFML.h"
+#include"Button.h"
 
 App::App()
 {
@@ -24,7 +25,7 @@ bool App::init()
 	kf::LogSystem::getDefault().addFile("base.log");
 	kf_log("Started");
 
-	m_window.create(sf::VideoMode(1920, 1080, 32), "Kage2D");
+	m_window.create(sf::VideoMode(1920, 1080, 32), "Breakout - Chocobo Edition");
 	m_window.setFramerateLimit(60);
 	
 	if (!m_font.loadFromFile("data/bluehigh.ttf"))
@@ -44,15 +45,11 @@ bool App::start()
 
 void App::update(float deltaT)
 {
-
 }
 
 void App::render()
 {
-
 }
-
-
 
 void App::run()
 {
@@ -81,6 +78,11 @@ void App::run()
 			{
 				m_window.close();
 				break;
+			}
+
+			if (event.type == sf::Event::MouseButtonPressed) {
+				if (event.mouseButton.button == sf::Mouse::Left)
+					Button::processClick(m_window);
 			}
 		}
 		sf::Time deltaT_sfml = m_clock.restart();

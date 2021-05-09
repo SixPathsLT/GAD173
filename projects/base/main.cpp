@@ -1,12 +1,16 @@
 #include "cmath"
 #include "kf/kf_log.h"
-#include "example.h"
-
+#include "GameManager.h"
+#include "ResourceManager.h"
 using namespace std;
 
 int main()
 {
-	Example::inst().run();
+
+	//loads resources
+	ResourceManager::init();
+	Button::init();
+	GameManager::inst().init();
 
 	return 0;
 }

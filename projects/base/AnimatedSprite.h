@@ -7,7 +7,10 @@ class AnimatedSprite
 
 public: static const enum SpriteType {
 		BLOCK,
-		COIN
+		COIN,
+		CHOCOBO,
+		FIRE_EFFECT,
+		EXPLOSION_EFFECT
 	};
 
 private:
@@ -39,7 +42,10 @@ public:
 	void render(sf::RenderWindow& m_window);
 
 	void setFrame(int frame);
+	void setRow(int row);
 	void play(bool loop);
+
+	inline bool &isPlaying() { return playing; }
 
 };
 

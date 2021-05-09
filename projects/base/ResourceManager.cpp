@@ -1,17 +1,14 @@
 #include "ResourceManager.h"
 #include "kage2dutil/texture_manager.h"
 #include "Grid.h"
-#include "example.h"
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include "GameManager.h"
 
 #define TOTAL_FILES 50
 
-int ResourceManager::TOTAL_LOADED_TEXTURES;
-
 std::map<std::string, sf::Texture*> ResourceManager::TEXTURES;
-
-sf::Texture *ResourceManager::selectedTexture;
-
-char ResourceManager::fileName[26] = "custom_map_1";
 sf::Font ResourceManager::FONT_BLUE_HIGH;
 
 //TEMPORARILY DEFINED
@@ -53,9 +50,25 @@ std::string files[TOTAL_FILES][2] = {
 
 	//game data
 	{ "coin_spritesheet", "data/GameData/coin.png" },
-	{ "block_spritesheet", "data/GameData/block_sheetA.png" },
+	{ "block_spritesheet", "data/GameData/block_sheet.png" },
+	{ "button", "data/GameData/button.png" },
+	{ "chocobo_spritesheet", "data/GameData/chocobo_sheet.png" },
+	{ "fire_effect_spritesheet", "data/GameData/fire_effect_sheet.png" },
+	{ "explosion_spritesheet", "data/GameData/explosion_sheet.png" },
 
+	{ "map_1", "data/GameData/map_1.png" },
+	{ "map_2", "data/GameData/map_2.png" },
+	{ "map_3", "data/GameData/map_3.png" },
+	{ "map_4", "data/GameData/map_4.png" },
 };
+
+ResourceManager::~ResourceManager()
+{
+	/*for (auto texture : TEXTURES)
+		delete texture.second;
+	
+	TEXTURES.clear();*/
+}
 
 void ResourceManager::init() {
 	//load fonts here
@@ -69,40 +82,34 @@ void ResourceManager::init() {
 		std::string path = files[i][1];
 
 		TEXTURES[name] = kage::TextureManager::getTexture(path);
+		TEXTURES[name]->setSmooth(true);
 	}
 
-	TOTAL_LOADED_TEXTURES = getTotalLoadedTextures();
-}
-
-void ResourceManager::saveMap(Grid &grid) {
-	std::string mapDetails = ResourceManager::getMapDetails(grid);
-
-	std::ofstream file("data/MapSaves/" + ((std::string) ResourceManager::fileName) + ".txt");
-	file << mapDetails;
-	file.close();
 }
 
 
-void ResourceManager::loadMap(Grid &grid) {
-	std::ifstream file("data/MapSaves/" + ((std::string) ResourceManager::fileName) + ".txt");
+
+
+void ResourceManager::loadMap(std::string fileName) {
+	std::ifstream file("data/MapSaves/" + fileName + ".txt");
 	if (!file.good()) { // checks if file exists
-		std::cout << "File '" << ((std::string) ResourceManager::fileName) << "' does not exist." << std::endl;
+		std::cout << "File '" << fileName << "' does not exist." << std::endl;
 		return;
 	}
 
-	ResourceManager::clearMap(grid); // clears current map grid before drawing on it.
+	ResourceManager::clearMap(); // clears current map grid before drawing on it.
 	std::string line;
 
 	while (std::getline(file, line)) {
 		if (line.length() < 1)
 			continue;
 
-		loadMapData(line, grid);
+		loadMapData(line);
 	}
 	file.close();
 }
 
-void ResourceManager::loadMapData(std::string data, Grid &grid) {
+void ResourceManager::loadMapData(std::string data) {
 	int endIndex = data.find(" - ");
 	std::string textureName = data.substr(0, endIndex); // extract the texture name
 	data = data.substr(endIndex); // updates data to remove the texture name
@@ -117,8 +124,7 @@ void ResourceManager::loadMapData(std::string data, Grid &grid) {
 		int tileId = std::stoi(word);
 
 		//sets the desired texture to the specified index on the map grid.
-		grid.tiles[tileId].setTexture(textureName);
-		
+		GameManager::grid.tiles[tileId].setTexture(textureName);	
 	}
 
 	// following commented out code works also :)
@@ -144,72 +150,12 @@ void ResourceManager::loadMapData(std::string data, Grid &grid) {
 	}*/
 }
 
-void ResourceManager::clearMap(Grid &grid) {
-	for (int i = 0; i < grid.getSize(); i++) {
-		Tile *tile = &grid.tiles[i];
+void ResourceManager::clearMap() {
+	for (int i = 0; i < GameManager::grid.getSize(); i++) {
+		Tile *tile = &GameManager::grid.tiles[i];
 		if (tile->textureName.length() < 1)
 			continue;
 
 		tile->removeSprite();
 	}
-}
-
-std::string ResourceManager::getMapDetails(Grid &mapGrid) {
-	//saves any tile data to map_textures if the tile has a texture on it
-	std::map<std::string, std::string> map_textures;
-	for (int i = 0; i < mapGrid.getSize(); i++) {
-		Tile *tile = &mapGrid.tiles[i];
-		if (tile->textureName.length() < 1)
-			continue;
-
-		std::string savedData = map_textures[tile->textureName];
-		map_textures[tile->textureName] = savedData + " - " + std::to_string(tile->id);
-	}
-
-	std::string mapDetails;
-
-	//iterates through map_textures to fetch each texture name, followed with all the tile id's that has that texture.
-	std::map<std::string, std::string>::iterator iterator;
-	for (iterator = map_textures.begin(); iterator != map_textures.end(); iterator++) {
-		mapDetails += iterator->first + iterator->second + "\n";
-	}
-
-	return mapDetails;
-}
-
-//returns the texture name when provided with the pointer of the texture
-std::string ResourceManager::getKey(sf::Texture *texture) {
-	std::map<std::string, sf::Texture*>::iterator iterator;
-
-	for (iterator = ResourceManager::TEXTURES.begin(); iterator != ResourceManager::TEXTURES.end(); iterator++) {
-		if (iterator->first.empty() || iterator->second == nullptr || !ResourceManager::isDrawableTexture(iterator->first))
-			continue;
-
-		if (iterator->second == texture)
-			return iterator->first;
-	}
-
-	return "";
-}
-
-
-int ResourceManager::getTotalLoadedTextures() {
-	int count = 0;
-	for (int i = 0; i < TOTAL_FILES; i++) {
-		std::string name = files[i][0];
-		if (name.length() < 1)
-			break;
-		
-		count++;
-	}
-
-	return count;
-}
-
-
-bool ResourceManager::isDrawableTexture(std::string textureName) {
-	if (textureName.find("tool_") != -1 || textureName.find("spritesheet") != -1)
-		return false;
-
-	return true;
 }

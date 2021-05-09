@@ -18,24 +18,22 @@ private:
 	int startX = 0;
 	int startY = 0;
 
+
 public:
+	sf::RectangleShape rectShape;
+
 	Grid();
 	Grid(int totalRows, int totalColumns, int startX = 0, int startY = 0);
 
 	Tile tiles[TOTAL_TILES_AMOUNT];
 
-	static sf::Color HIGHLIGHT_COLOR;
-	static sf::Color TRANSPARENT_COLOR;
-	sf::Text *tileIndexInfo = new sf::Text();
-	bool showLines = true;
-	bool showTileIds = false;
-	Tile* selectedTile = nullptr;
-
-
 	void createTiles(int sizeX, int sizeY, double spacing = 1);
+	void update(sf::RenderWindow&);
 	void draw(sf::RenderWindow&);
 	Tile* fetchTile(sf::Vector2i);
 	int getSize();
 
+	inline int getRows() { return rows; }
+	inline int getColumns() { return columns; }
 };
 

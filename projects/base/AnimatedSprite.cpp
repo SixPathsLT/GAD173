@@ -27,11 +27,28 @@ void AnimatedSprite::setAnimation(SpriteType spriteType, int speed) {
 		totalFrames = 6;
 		totalRows = 1;
 		break;
+	case AnimatedSprite::CHOCOBO:
+		spriteSheetTexture = ResourceManager::TEXTURES["chocobo_spritesheet"];
+		totalFrames = 4;
+		totalRows = 4;
+		spriteWidth = 1;
+		spriteHeight = -1;
+		break;
+	case AnimatedSprite::FIRE_EFFECT:
+		spriteSheetTexture = ResourceManager::TEXTURES["fire_effect_spritesheet"];
+		totalFrames = 9;
+		totalRows = 1;
+		break;
+	case AnimatedSprite::EXPLOSION_EFFECT:
+		spriteSheetTexture = ResourceManager::TEXTURES["explosion_spritesheet"];
+		totalFrames = 7;
+		totalRows = 1;
+		break;
 	}
 
 
-	spriteWidth = spriteSheetTexture->getSize().x / totalFrames;
-	spriteHeight = spriteSheetTexture->getSize().y / totalRows;
+	spriteWidth += (spriteSheetTexture->getSize().x / totalFrames);
+	spriteHeight += (spriteSheetTexture->getSize().y / totalRows);
 
 	spriteSheet.setTexture(*spriteSheetTexture);
 	setFrame(0);
@@ -40,10 +57,6 @@ void AnimatedSprite::setAnimation(SpriteType spriteType, int speed) {
 
 
 void AnimatedSprite::update()
-{
-}
-
-void AnimatedSprite::render(sf::RenderWindow& m_window)
 {
 	if (!playing)
 		return;
@@ -61,9 +74,15 @@ void AnimatedSprite::render(sf::RenderWindow& m_window)
 
 		if (currentRow > totalRows)
 			currentRow = 1;
-	
+
 		clock.restart();
 	}
+}
+
+void AnimatedSprite::render(sf::RenderWindow& m_window)
+{
+	if (!playing)
+		return;
 
 	m_window.draw(spriteSheet);
 }
@@ -72,6 +91,10 @@ void AnimatedSprite::render(sf::RenderWindow& m_window)
 void AnimatedSprite::setFrame(int frame) {
 	spriteSheet.setTextureRect(sf::IntRect(spriteWidth * frame, spriteHeight * currentRow, spriteWidth, spriteHeight));
 
+}
+
+void AnimatedSprite::setRow(int row) {
+	currentRow = row;
 }
 
 void AnimatedSprite::play(bool loop)
